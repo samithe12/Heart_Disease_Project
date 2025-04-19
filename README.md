@@ -115,4 +115,4 @@ To develop an AI model using Python to predict the presence of heart disease bas
     * Update the shared Google Doc (link below) with notes or progress.
 
 ## Shared Document (Google Doc)
-* [Sami: PASTE THE LINK to your shared Google Doc here]
+* https://docs.google.com/document/d/1QoEksyKeqQFb6kIcIq8cY7TUNYNvZNC9gxcSPhTlcyo/edit?usp=sharing
