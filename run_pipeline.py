@@ -1,14 +1,15 @@
 import pandas as pd
 import data_loader # Your script to load data
 import data_preprocessor # Your script with the DataPreprocessor class
+import evaluation_metrics as my_metrics # Import your new functional metrics module
 
 # Import necessary sklearn modules
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+# Keep these sklearn metrics for convenient formatted output
 from sklearn.metrics import confusion_matrix, classification_report
 
-print("--- Running Main Pipeline Script ---")
+print("--- Running Main Pipeline Script (Simplified: Logistic Regression Only) ---")
 
 # --- Initialization ---
 df_real = None
@@ -55,18 +56,19 @@ if data_ok:
         else:
             print("ERROR: 'target_binary' column not found or created. Cannot separate.")
             data_ok = False
-            # X, y remain None if error occurs here
     except KeyError as e:
         print(f"Error separating features/target. Missing column: {e}")
         data_ok = False
-        # X, y remain None
 
 # Proceed only if separation was okay
-if data_ok:
+if data_ok and X is not None and y is not None:
     # 4. Initialize and Apply Preprocessor
     print("Initializing DataPreprocessor...")
+    # Create an instance of the class from data_preprocessor.py
     preprocessor = data_preprocessor.DataPreprocessor()
 
+    # Fit the preprocessor and transform the features X
+    # This applies imputation, scaling, and encoding
     print("Applying preprocessing (fit_transform) to real data X...")
     try:
         X_processed = preprocessor.fit_transform(X)
@@ -74,8 +76,8 @@ if data_ok:
         # 5. Verify Processed Data
         print("\n--- Preprocessing Complete ---")
         print(f"Shape of processed features (X_processed): {X_processed.shape}")
-        print("First 5 rows of processed data (X_processed):")
-        print(X_processed[:5, :]) # Displaying numpy array
+        # print("First 5 rows of processed data (X_processed):") # Optional: Uncomment to view
+        # print(X_processed[:5, :])
 
         # 6. Train/Test Split
         print("\n--- Splitting data into Train/Test sets ---")
@@ -85,82 +87,45 @@ if data_ok:
         print(f"X_train shape: {X_train.shape}, X_test shape: {X_test.shape}")
         print(f"y_train shape: {y_train.shape}, y_test shape: {y_test.shape}")
 
-        # 7. Train Initial Model (Logistic Regression)
+        # 7. Train Logistic Regression Model
         print("\n--- Training Logistic Regression model ---")
         log_reg_model = LogisticRegression(random_state=42, max_iter=1000)
         log_reg_model.fit(X_train, y_train)
         print("Logistic Regression model trained successfully.")
 
-        # 8. Evaluate the Model
+        # 8. Evaluate the Logistic Regression Model
         print("\n--- Evaluating Logistic Regression model on Test Set ---")
-        # Use the trained model to make predictions on the TEST FEATURES (X_test)
-        y_pred = log_reg_model.predict(X_test)
+        y_pred_lr = log_reg_model.predict(X_test)
 
-        # --- Calculate Performance Metrics ---
-        accuracy = accuracy_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred, zero_division=0)
-        recall = recall_score(y_test, y_pred, zero_division=0)
-        f1 = f1_score(y_test, y_pred, zero_division=0)
+        # --- Calculate Performance Metrics using custom functions ---
+        accuracy_lr = my_metrics.calculate_accuracy(y_test, y_pred_lr)
+        precision_lr = my_metrics.calculate_precision(y_test, y_pred_lr)
+        recall_lr = my_metrics.calculate_recall(y_test, y_pred_lr)
+        f1_lr = my_metrics.calculate_f1(y_test, y_pred_lr)
 
-        print(f"Accuracy:  {accuracy:.4f}")
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall:    {recall:.4f}")
-        print(f"F1-score:  {f1:.4f}")
+        print("--- METRICS (Logistic Regression - Functional Calculation) ---")
+        print(f"Accuracy:  {accuracy_lr:.4f}")
+        print(f"Precision: {precision_lr:.4f}")
+        print(f"Recall:    {recall_lr:.4f}")
+        print(f"F1-score:  {f1_lr:.4f}")
 
-        # --- Confusion Matrix ---
-        print("\nConfusion Matrix:")
-        cm = confusion_matrix(y_test, y_pred)
-        print(cm)
-        # [[TN, FP],
-        #  [FN, TP]]
-
-        # --- Classification Report ---
-        print("\nClassification Report:")
-        print(classification_report(y_test, y_pred, target_names=['No Disease (0)', 'Disease (1)'], zero_division=0))
-
-        # --- Evaluation Complete ---
+        # --- Use sklearn for formatted reports ---
+        print("\nConfusion Matrix (Logistic Regression):")
+        cm_lr = confusion_matrix(y_test, y_pred_lr)
+        print(cm_lr)
+        print("\nClassification Report (Logistic Regression):")
+        print(classification_report(y_test, y_pred_lr, target_names=['No Disease (0)', 'Disease (1)'], zero_division=0))
         print("\n--- Evaluation Complete for Logistic Regression ---")
-        # (Code for other models or final steps would go here)
+
+        # --- Random Forest Section Removed for Simplification ---
 
     except Exception as e:
-         print(f"An error occurred during preprocessing, training, or evaluation: {e}")
+         print(f"\nAn error occurred during preprocessing, training, or evaluation: {e}")
          data_ok = False # Indicate an error occurred
 
-if not data_ok: # Check if any step failed along the way
+# Check if any step failed along the way
+if not data_ok:
      print("\nScript halted or did not complete fully due to errors.")
 
+
 print("\n--- End of Main Pipeline Script ---")
-# --- Train and Evaluate Random Forest Model ---
-print("\n--- Training Random Forest model ---")
-from sklearn.ensemble import RandomForestClassifier
- # Instantiate with default parameters (keeping it simple)
-rf_model = RandomForestClassifier(random_state=42)
-
-            # Train on the SAME training data
-rf_model.fit(X_train, y_train)
-print("Random Forest model trained successfully.")
-
-print("\n--- Evaluating Random Forest model on Test Set ---")
-            # Make predictions
-y_pred_rf = rf_model.predict(X_test)
-
-            # Calculate Metrics (reuse or call functional metric functions)
-accuracy_rf = accuracy_score(y_test, y_pred_rf)
-precision_rf = precision_score(y_test, y_pred_rf, zero_division=0)
-recall_rf = recall_score(y_test, y_pred_rf, zero_division=0)
-f1_rf = f1_score(y_test, y_pred_rf, zero_division=0)
-
-print(f"Accuracy:  {accuracy_rf:.4f}")
-print(f"Precision: {precision_rf:.4f}")
-print(f"Recall:    {recall_rf:.4f}")
-print(f"F1-score:  {f1_rf:.4f}")
-
-print("\nConfusion Matrix (Random Forest):")
-cm_rf = confusion_matrix(y_test, y_pred_rf)
-print(cm_rf)
-
-print("\nClassification Report (Random Forest):")
-print(classification_report(y_test, y_pred_rf, target_names=['No Disease (0)', 'Disease (1)'], zero_division=0))
-print("\n--- Evaluation Complete for Random Forest ---")
-
-        # (Outer indentation continues...)
