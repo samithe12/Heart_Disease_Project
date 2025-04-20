@@ -12,29 +12,26 @@ Instructor: Dr. Haythem El-Messiry
 ## Project Goal
 To develop an AI model using Python to predict the presence of heart disease based on the UCI Cleveland dataset. This project specifically explores the integration of **Procedural**, **Object-Oriented (OOP)**, and **Functional (FP)** programming paradigms as required by the course.
 
-## Current Status (as of Saturday, Apr 19th Evening)
-* Initial project structure created locally.
-* Virtual environment (`venv`) set up using Python's built-in module.
-* Required Python packages installed (`requirements.txt` generated).
-* Dataset (`processed.cleveland.data`) downloaded and placed in `data_base/` folder.
-* Initial Exploratory Data Analysis (EDA) completed in `Data_Exploration.ipynb`:
-    * Data loaded and inspected successfully.
-    * Target variable analyzed, converted to binary (0=No Disease, 1=Disease Present), and found to be reasonably balanced (~54% vs 46%).
-    * Numerical features analyzed (`.describe()`, histograms, box plots); outliers noted in `chol` and `oldpeak`.
-    * Key categorical features analyzed visually (`countplot` with `hue=target_binary`), identifying potentially strong predictors (`sex`, `cp`, `exang`, `slope`, `ca`, `thal`).
-* Placeholder Python files created (e.g., `data_loader.py`, `data_preprocessor.py`, etc. - *Sami: Adjust names if you used the alternatives we discussed*).
-* `.gitignore` file created to exclude `.venv` and `__pycache__`.
+## Current Status (as of Sun, Apr 20th Evening)
+
+* **Core Implementation Complete!**
+* Project setup complete (Repo structure, venv, `requirements.txt`, `.gitignore`).
+* Dataset (`processed.cleveland.data`) loaded via `data_loader.py`.
+* Exploratory Data Analysis (EDA) performed (`Data_Exploration.ipynb`) - key insights identified (missing values in `ca`/`thal`, types, target balance ~54%/46%, feature relationships).
+* **Object-Oriented Programming (OOP):** Implemented `DataPreprocessor` class (`data_preprocessor.py`) encapsulating the preprocessing pipeline (Imputation, Scaling, Encoding) using Scikit-learn's `Pipeline` and `ColumnTransformer`.
+* **Functional Programming (FP):** Implemented pure functions (`evaluation_metrics.py`) for calculating accuracy, precision, recall, and F1-score.
+* **Procedural Programming:** Orchestrated the complete workflow (Load -> Preprocess -> Split -> Train -> Evaluate) in the main script (`run_pipeline.py`).
+* **Model Training & Evaluation:** Successfully trained and evaluated a `LogisticRegression` model on the preprocessed data using a train/test split. Evaluation metrics were calculated using the custom functional metrics functions, yielding reasonable results (e.g., ~88.5% accuracy). (Random Forest was initially evaluated but removed for simplification).
 
 ## Repository Structure
 * `data_base/`: Contains the `processed.cleveland.data` file.
-* `Data_Exploration.ipynb`: Jupyter Notebook with EDA steps and findings.
+* `Data_Exploration.ipynb`: Notebook with EDA steps and findings.
 * `data_loader.py`: Script/module for loading data.
-* `data_preprocessor.py`: Placeholder for the OOP preprocessing pipeline class.
-* `evaluation_metrics.py`: Placeholder for functional evaluation metric functions.
-* `custom_transforms.py`: Placeholder for any custom functional transformations.
-* `run_pipeline.py`: Placeholder for the main script orchestrating the process.
+* `data_preprocessor.py`: Contains the OOP `DataPreprocessor` class.
+* `evaluation_metrics.py`: Contains the pure functions for metrics (FP Demo).
+* `run_pipeline.py`: Main script executing the workflow (Procedural Demo).
 * `requirements.txt`: Lists required Python packages and exact versions.
-* `.gitignore`: Specifies files/folders for Git to ignore.
+* `.gitignore`: Specifies files/folders for Git to ignore (like `.venv`).
 * `README.md`: This file.
 
 ## Getting Started (Setup for Teammates)
@@ -43,76 +40,68 @@ To develop an AI model using Python to predict the presence of heart disease bas
 
 1.  **Clone the Repository:**
     * Open VS Code.
-    * Open the Command Palette (`Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on Mac).
-    * Type `Git: Clone` and press Enter.
-    * Paste the repository URL: `[Sami: PASTE THE GITHUB REPO URL HERE]` and choose a location on your computer to save the project.
-    * Once cloned, open the downloaded project folder in VS Code (`File -> Open Folder...`).
+    * Use the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and type `Git: Clone`.
+    * Paste the repository URL: `[Sami: PASTE THE GITHUB REPO URL HERE]` and choose a location on your computer to save the project folder.
+    * Once cloned, open the project folder in VS Code (`File -> Open Folder...`).
 
 2.  **Open the Integrated Terminal in VS Code:**
-    * Go to the menu `Terminal -> New Terminal` (or use the shortcut `Ctrl+`` `).
-    * The terminal should open at the bottom, already inside the project folder.
+    * Go to the menu `Terminal -> New Terminal` (or `Ctrl+\``).
+    * Make sure the terminal is inside the project folder (`Heart_Disease_Project`).
 
-3.  **Create Your Local Virtual Environment:**
-    * In the VS Code terminal, type the following command and press Enter:
+3.  **Create Your Virtual Environment:**
+    * In the VS Code terminal, run:
         ```bash
         python -m venv .venv
         ```
-        *(Use `python3` if `python` doesn't point to Python 3 on your system. This creates a `.venv` folder just for this project on your machine. It's already listed in `.gitignore`.)*
+        *(Use `python3` if needed on your system. This creates a `.venv` folder inside the project - it's already in `.gitignore` so it won't be committed).*
 
 4.  **Activate the Virtual Environment:**
-    * **Crucial:** Activate the environment *in the same VS Code terminal*. The command depends on your operating system:
-        * **Windows (using Command Prompt or PowerShell):**
+    * **In the SAME VS Code terminal**, run the activation command for your OS:
+        * **Windows (Command Prompt/PowerShell):**
             ```cmd
             .\.venv\Scripts\activate
             ```
-        * **macOS / Linux (using bash or zsh):**
+        * **macOS / Linux (bash/zsh):**
             ```bash
             source .venv/bin/activate
             ```
-    * **Check:** You should see `(.venv)` appear at the start of your terminal prompt line inside VS Code.
-    * *VS Code Hint:* VS Code might show a pop-up asking if you want to select the discovered environment `.venv` for the workspace. Click **Yes**.
+    * You should see `(.venv)` appear at the start of your terminal prompt.
+    * *VS Code Hint:* VS Code might ask if you want to select this environment for the workspace - click Yes.
 
 5.  **Install Required Packages:**
-    * Make sure the `(.venv)` prefix is visible in your terminal prompt. Then run:
+    * While the environment is active (`(.venv)` visible), run:
         ```bash
         pip install -r requirements.txt
         ```
-    * This reads the `requirements.txt` file from the repo and installs the exact versions of `pandas`, `scikit-learn`, etc., that were used for setup.
+    * This installs the exact same package versions used during setup.
 
-6.  **You're Ready!**
-    * You can now open `Data_Exploration.ipynb` to see the EDA, examine the `.py` files, and run Python code using the correct isolated environment directly within VS Code.
+6.  **You're Ready!** You can now run the notebooks (`.ipynb`) and scripts (`.py`) within VS Code, using the activated virtual environment.
 
-## Next Steps & Roles (Immediate Focus)
+## Next Steps & Roles (Final Deliverables Focus)
 
-**DEADLINE: Tuesday, April 22nd - Let's coordinate closely!**
+**Deadline: Tuesday, April 22nd - Final Push!**
 
-1.  **Data Preprocessing Pipeline Design & Implementation (Lead: Marwan & Shehab):**
-    * **Goal:** Create the Scikit-learn pipeline to clean and prepare data for modeling, based on EDA findings.
-    * **Tasks:** Implement within `data_preprocessor.py` (and potentially `custom_transforms.py`, `evaluation_metrics.py`). Use `Pipeline` and `ColumnTransformer`.
-        * Impute missing `ca` and `thal` values (discuss method: e.g., `SimpleImputer` with `strategy='most_frequent'`).
-        * Scale numerical features (`StandardScaler`).
-        * Encode categorical features (`OneHotEncoder`, consider `handle_unknown='ignore'`).
-    * **Paradigms:** Focus on **OOP** structure (Marwan) integrating **Functional** components for specific transforms/metrics (Shehab).
+The core coding is complete. The remaining focus is entirely on finalizing the deliverables:
 
-2.  **Report Writing & Documentation (Lead: Abdulrahman):**
-    * **Goal:** Start compiling the final report document.
-    * **Tasks:**
-        * Begin writing the **Introduction** and **Problem Description**.
-        * Use EDA summary (from Sami/notebook) for the **Data Exploration** section.
-        * Start drafting the **Solution Design** section, outlining the planned Preprocessing steps and the roles of OOP/Functional paradigms (coordinate with Marwan/Shehab).
-        * Refer to the course requirements for report structure.
+1.  **Report Writing (Highest Priority - Lead: Abdulrahman, Input: All):**
+    * **Goal:** Complete the comprehensive final report.
+    * **Tasks:** Compile all sections (Intro, Problem, EDA Summary [from Sami], Solution Design [Proc/OOP/FP justifications - input from Marwan/Shehab/Sami], Implementation Details, Evaluation Results [LogReg metrics], **Paradigm Analysis** [Pros/Cons - team reflection], Conclusion, References).
+    * **Critical:** Ensure the Design and Analysis sections clearly explain *how* and *why* the paradigms were used and evaluate their effectiveness in *this* project.
 
-3.  **EDA Documentation & Support (Lead: Sami):**
-    * **Goal:** Ensure EDA is well-documented and accessible.
-    * **Tasks:**
-        * Write a clear summary of key EDA findings (as discussed) and share with Abdulrahman.
-        * Clean up and add comments/markdown explanations to `Data_Exploration.ipynb`.
-        * Be available to answer questions about the data for the team.
+2.  **Presentation Creation (Lead: Abdulrahman):**
+    * **Goal:** Create slides summarizing the report.
+    * **Tasks:** Cover key aspects: Problem, Data, Design/Paradigms, Implementation, Results, Analysis, Conclusion.
 
-4.  **Collaboration & Code Sharing:**
-    * **Push all code changes** to this GitHub repository frequently (`git add .`, `git commit -m "Your message"`, `git push`).
-    * Use the group chat for quick questions and coordination.
-    * Update the shared Google Doc (link below) with notes or progress.
+3.  **Code Cleanup, Comments & Final Commit (Responsibility: All):**
+    * **Goal:** Ensure final code is readable, documented, and submitted correctly.
+    * **Tasks:** Review all `.py` and `.ipynb` files. Add comments (`#`) explaining logic clearly. Ensure consistent formatting. Push final commented version to GitHub.
 
-## Shared Document (Google Doc)
-* https://docs.google.com/document/d/1QoEksyKeqQFb6kIcIq8cY7TUNYNvZNC9gxcSPhTlcyo/edit?usp=sharing
+4.  **Q&A Preparation (Responsibility: All):**
+    * **Goal:** Be ready for individual questions.
+    * **Tasks:** Review the final code, report draft, and presentation slides.
+
+5.  **Collaboration:**
+    * Provide all necessary information (EDA summary, design details, FP details) to Abdulrahman promptly.
+    * Use GitHub for final code push.
+    * Coordinate via group chat/Google Doc.
+
